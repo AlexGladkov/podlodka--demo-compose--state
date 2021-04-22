@@ -15,6 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import ru.neura.podlodkaandroiddemo.ui.theme.PodlodkaAndroidDemoTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
 
@@ -26,7 +29,7 @@ class MainActivity : ComponentActivity() {
             PodlodkaAndroidDemoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    KittenView(count = count)
+                    MainScreen()
                 }
             }
         }
@@ -34,22 +37,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun KittenView(count: MutableState<Int>) {
-    Column {
-        Text(text = "We have ${count.value} kittens")
-        Button(onClick = {
-            count.value += 1
-        }) {
-            Text("Release new Kitten")
-        }
-    }
+fun MainScreen(viewModel: MainViewModel = MainViewModel()) {
+    val count: Int by viewModel.count.observeAsState(3)
+
+    KittenView(count = count, onNewKitten = { viewModel.releaseNewKittens() })
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     PodlodkaAndroidDemoTheme {
-        val count = mutableStateOf(3)
-        KittenView(count = count)
+        KittenView(3, {})
     }
 }
